@@ -1,33 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-"""
-###############################################################################
-#                                                                             
-#                         小米路由器 SSH 连接工具                              
-#                     Xiaomi Router SSH Connection Tool                        
-#                                                                             
-###############################################################################
-
-功能说明:
----------
-本脚本用于自动化获取小米路由器的 SSH 访问权限，包含以下步骤：
-1. 设置系统时间
-2. 解锁 dropbear 配置
-3. 激活 SSH 配置
-4. 启动 dropbear 服务
-5. 建立 SSH 连接并同步时间
-
-使用方法:
----------
-1. 安装依赖：pip install requests paramiko
-2. 设置路由器IP和Token
-3. 运行脚本：python router_hack.py
-
-作者: [你的名字]
-版本: 1.0.0
-日期: 2024-03-xx
-"""
 
 # 只导入基本模块
 import sys
@@ -590,8 +563,8 @@ def show_welcome_banner():
     banner = """
 ╭━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╮
 │                                                  │
-│             小米路由器 SSH 连接工具              │
-│         XiaoMi Router SSH Connection Tool        │
+│             小米/红米路由器SSH开启工具           │
+│         XiaoMi Router SSH Enable Tool            │
 │                                                  │
 │            版本: 1.0.0  作者: WangDao            │
 │                                                  │
